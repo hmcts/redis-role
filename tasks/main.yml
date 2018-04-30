@@ -1,0 +1,24 @@
+---
+- name: Install REDIS
+  yum:
+    name: "{{ redis_install_rpm }}"
+    state: present
+  become: yes
+
+- name: Configure Redis
+  template:
+    src: redis.conf.j2
+    dest: "{{ redis_config_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart redis
+
+- name: Ensure Redis is started on boot
+  service:
+    name: redis
+    enabled: yes
+    state: started
+
+- include: openresty.yml

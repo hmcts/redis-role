@@ -1,0 +1,6 @@
+---
+redis_install_rpm: redis-3.2.10-2.el7
+redis_config_file: /etc/redis.conf
+redis_bind_group: ''
+openresty_nginx_config_path: /usr/local/openresty/nginx/conf/nginx.conf
+openresty_install_rpm: openresty

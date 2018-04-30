@@ -1,0 +1,11 @@
+---
+
+- name: restart redis
+  service:
+    name: redis
+    state: restarted
+
+- name: restart nginx
+  service:
+    name: openresty
+    state: restarted

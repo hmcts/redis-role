@@ -1,0 +1,19 @@
+---
+- name: Install OPENRESTY
+  yum:
+    name: "{{ openresty_install_rpm }}"
+    state: present
+  become: yes
+
+- name: Configure openresty nginx
+  template:
+    src=nginx.conf.j2
+    dest="{{ openresty_nginx_config_path }}"
+  notify:
+    - restart nginx
+
+- name: Start NGINX
+  service:
+    name: openresty
+    enabled: yes
+    state: started

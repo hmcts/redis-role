@@ -1,0 +1,32 @@
+
+events {}
+http {
+
+    server {
+          listen 80;
+          server_name {{ hostname }};
+
+          location = /ping {
+                  internal;
+
+                  redis2_query ping;
+                  redis2_pass 127.0.0.1:{{ redis_listen_port | default("6379") }};
+                  }
+
+          location = /healthcheck {
+                default_type 'application/json';
+                content_by_lua "
+                    local res = ngx.location.capture('/ping',{ method = ngx.HTTP_PUT })
+
+                    if res.body == '+PONG\\r\\n' then
+                        ngx.print('{\"name\": \"{{ app_name | default("redis") }}\", \"status\": \"up\"}')
+                    end
+
+                    if res.status ~= 200 or not res.body then
+                        ngx.log(ngx.ERR, 'failed to query redis')
+                        ngx.print('{\"name\": \"{{ app_name | default("redis") }}\", \"status\": \"down\"}')
+                    end
+                ";
+          }
+    }
+}
